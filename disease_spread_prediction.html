@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+    <title>GoML</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript>
+        <link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+</head>
+
+<body class="is-preload">
+
+    <!-- Header -->
+    <header id="header">
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Main -->
+        <section id="main" class="wrapper">
+            <div class="inner">
+                <h1 class="major">Disease Spread Prediction</h1>
+                <h2>Abstract</h2>
+                <p>
+                    Dengue fever is a mosquito-borne disease that occurs in tropical and sub-tropical parts of the
+                    world.
+                    In mild cases,
+                    symptoms are similar to the flu: fever, rash, and muscle and joint pain. In severe cases, dengue
+                    fever can cause severe
+                    bleeding, low blood pressure, and even death.
+                </p>
+                <p>
+                    Millions of cases of dengue infection occur worldwide each year. Dengue fever is most common in
+                    Southeast Asia and the
+                    western Pacific islands, but the disease has been increasing rapidly in Latin America and the
+                    Caribbean. This project aimed to establish a statistical model to predict the number of
+                    dengue cases in
+                    two Latin American
+                    cities.
+                </p>
+
+                <h2>Effect of Climate on Dengue Spread</h2>
+                <p>
+                    Because it is carried by mosquitoes, the transmission dynamics of dengue are related to climate
+                    variables such as
+                    temperature and precipitation. Although the relationship to climate is complex, a growing number of
+                    scientists argue
+                    that climate change is likely to produce distributional shifts that will have significant public
+                    health implications
+                    worldwide.
+                </p>
+                <p>
+                    An understanding of the relationship between climate and dengue dynamics can improve research
+                    initiatives and resource
+                    allocation to help fight life-threatening pandemics. Using environmental data collected by the
+                    Centre for Disease Control & Prevention (CDC) and the
+                    National Oceanic and
+                    Atmospheric Administration in the U.S.A, we set out to predict the number of dengue fever cases
+                    reported each week in
+                    San Juan, Puerto Rico, and Iquitos, Peru.
+                </p>
+
+                <h2>Data Description</h2>
+                <p>
+                    To model the dengue fever incidence, several climatic factors like air temperature (min, max, avg),
+                    diurnal temperature
+                    range, specific humidity, relative humidity, precipitation, etc. were used as explanatory variables.
+                    Weekly climate data
+                    were collected from three sources:
+                </p>
+                <li> Daily climate data from the weather station</li>
+                <li>Satellite measurements</li>
+                <li>Climate Forecast System Reanalysis measurements</li>
+
+                <br> <br>
+                <h2>Data Preparation</h2>
+                <h3>Missing Value Imputation</h3>
+                <p>
+                    Any missing values are imputed with the average of bounding non-missing values. Missing values in
+                    the
+                    margins of a
+                    series were replaced with forwarding fill (or backward fill) imputations.
+                </p>
+
+                <h3>Outlier Treatment</h3>
+                <p>
+                    In the dependent variable (total cases of dengue), the presence of outliers was visually inspected
+                    and
+                    confirmed. So, the Hampel
+                    filter was used for outlier treatment.
+                </p>
+
+                <h3>Hampel Filter</h3>
+                <p>
+                    Hampel filter is used to identify and remove outliers in time series data. It uses a sliding window
+                    of configurable
+                    width to go over the data. For each window, we calculate the median. Then the standard deviation is
+                    estimated from the
+                    median absolute deviation
+                </p>
+                <p>
+                    For the MAD to be a consistent estimator for the standard deviation, we must multiply it by a
+                    constant scale factor k.
+                    The factor is dependent on the distribution, for Gaussian it is approximately 1.48.
+                </p>
+                <p>If: <u>Observed value > Window median + X*SD</u>, then, we treat it as an outlier and replace it with
+                    the median.
+                </p>
+                <p>The Hampel filter has two configurable parameters:</p>
+                <li>The size of the sliding window</li>
+                <li>The number of standard deviations which identify the outlier</li>
+                <p>
+                    We select these two parameters depending on the use-case. A higher X makes the filter less
+                    smoothening and a lower one
+                    identifies more points as outliers. <br> Now the data is processed and is ready for modeling.
+                </p>
+                <p></p>
+
+                <h2>Statistical Modelling</h2>
+                <p>
+                    The approach taken to solve the problem at hand was to use an ensemble of models. A Negative
+                    binomial regression was
+                    employed to predict the spread of dengue with climate variables as input. Time Series forecasting
+                    was done using a
+                    SARIMA model. Then the results of both the models were averaged to get the final prediction.
+                </p>
+
+                <h3>SARIMA</h3>
+                <p>
+                    Auto-Regressive Integrated Moving Average (ARIMA) models are widely used to forecast time series
+                    data.
+                    <br>
+                    SARIMA stands for Seasonal Auto-Regressive Integrated Moving models and are used to forecast time
+                    series with
+                    seasonality present in it. A SARIMA model has the following hyperparameters:
+                </p>
+                <li> <b>p:</b> AR order.</li>
+                <li> <b>d:</b> differencing order</li>
+                <li> <b>q:</b> MA order</li>
+                <li> <b>P:</b> Seasonal AR order</li>
+                <li> <b>D:</b> Seasonal differencing order</li>
+                <li> <b>Q:</b> Seasonal MA order</li>
+                <li> <b>S:</b> length of a period</li>
+                <p>
+                    A SARIMA model uses differencing at a lag equal to S, for removing additive seasonal effects. As
+                    with lag equal to 1
+                    differencing for removing a trend. It also includes autoregressive and moving average terms at lag
+                    S.
+                </p>
+                <p>
+                    For our prediction scenario,
+                </p>
+                <li>As there is no integrating effect in the total cases observed, d was set to 0</li>
+                <li>Appropriate values for q and p can be found from ACF and PACF plots respectively</li>
+                <li>S was chosen as 52 as the seasonality in climate data is observed every year.</li>
+                <li>P and Q were found from the PACF and ACF plots by looking at the correlation values near the length
+                    of a period</li>
+                <p>A SARIMA model was built using the chosen parameters and predictions were made.</p>
+
+                <h3>Negative Binomial Regression</h3>
+                <p>
+                    Negative binomial regression is a Supervised Machine Learning technique which is generally used to
+                    predict count
+                    variables, usually for over-dispersed count data (i.e.) when the variance exceeds the mean. As the
+                    weekly number of
+                    dengue cases reported was over-dispersed, an NBM model was used to forecast it with climate
+                    parameters as independent
+                    variables.
+                </p>
+                <p>
+                    Lag variables were created with climate data and features with good predictability were chosen. For
+                    feature selection, a
+                    random forest model was fitted to the raw data, and variables with high feature importance (based on
+                    GINI score) were
+                    selected.
+                </p>
+                <p>
+                    Hyperparameter tuning was done using cross-validation and the final model was trained using Collab
+                    GPUs.
+                </p>
+
+                <h2>Further Steps</h2>
+                <p>
+                    A final forecast was made by taking the average of predictions made by both SARIMA and Negative
+                    Binomial models. The
+                    models were validated on a holdout dataset, and the final performance was recorded as an MSE of
+                    14.8.
+                </p>
+                <p>
+                    Dengue cases are subjected to various factors as briefly found in the scope of this project. A lot
+                    of external
+                    parameters such as vegetation index, population density, and other socio-economic factors have heavy
+                    control over the
+                    spread of dengue. A further stretch of this work will lead to more accurate predictions, which would
+                    aid governments and
+                    healthcare workers in suppressing the spread of dengue.
+                </p>
+
+
+            </div>
+
+
+
+
+
+        </section>
+
+    </div>
+
+
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
