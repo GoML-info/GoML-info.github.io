@@ -107,21 +107,20 @@
                     estimated from the
                     median absolute deviation
                 </p>
-                <p>
+                <!-- <p>
                     For the MAD to be a consistent estimator for the standard deviation, we must multiply it by a
                     constant scale factor k.
                     The factor is dependent on the distribution, for Gaussian it is approximately 1.48.
                 </p>
                 <p>If: <u>Observed value > Window median + X*SD</u>, then, we treat it as an outlier and replace it with
                     the median.
-                </p>
+                </p> -->
                 <p>The Hampel filter has two configurable parameters:</p>
                 <li>The size of the sliding window</li>
                 <li>The number of standard deviations which identify the outlier</li>
                 <p>
-                    We select these two parameters depending on the use-case. A higher X makes the filter less
-                    smoothening and a lower one
-                    identifies more points as outliers. <br> Now the data is processed and is ready for modeling.
+                    We selected these two parameters depending on the use-case and now the data is processed and is
+                    ready for modeling.
                 </p>
                 <p></p>
 
